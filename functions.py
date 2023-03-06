@@ -21,7 +21,7 @@ def create_window(zakladka, searched_id=1, activityid=0):
                     [sg.Image(filename="profile_picture.png"), sg.MenuBar([["=",["Opcja1", "Opcja2"]]])],
                     [sg.Image(filename="Stat_Chart.png")],
                     [sg.Text("MENU")],
-                    [sg.Image(filename="add_icon.png", enable_events=True, key="-post_add-"), sg.Image(filename="post_lookup_icon.png", enable_events=True, key="-post_lookup-"), sg.Image(filename="search_icon.png", enable_events=True, key="-search-")]
+                    [sg.Image(filename="add_icon.png", enable_events=True, key="-post_add-"), sg.Image(filename="post_lookup_icon.png", enable_events=True, key="-post_lookup-"), sg.Image(filename="search_icon.png", enable_events=True, key="-search-"), sg.Image(filename="fight_icon.png", enable_events=True, key="-fight_window-")]
                   ]
 
         window = sg.Window("LIFTMATE", layout)
@@ -31,6 +31,9 @@ def create_window(zakladka, searched_id=1, activityid=0):
 
             if event == sg.WIN_CLOSED or event == 'OK':
                 break
+            elif event == '-fight_window-':
+                window.close()
+                window = create_window("fight_window")
             elif event == '-post_lookup-':
                 window.close()
                 window = create_window("post_lookup")
@@ -42,6 +45,26 @@ def create_window(zakladka, searched_id=1, activityid=0):
                 window = create_window("search")
         window.close()
 
+    #zakładka walki
+    elif zakladka == "fight_window":
+        sg.theme('DarkAmber')
+        layout = [
+            [sg.Text("WALKA"), sg.MenuBar([["=", ["Opcja1", "Opcja2"]]])],
+            [ sg.Button("Back", key='-cancel-')]
+        ]
+
+        window = sg.Window("FITMATE/SEARCH", layout)
+        window.set_icon("icon.ico")
+        while True:
+            event, values = window.read()
+
+            if event == sg.WIN_CLOSED or event == 'OK':
+                break
+            elif event == "-cancel-":
+                window.close()
+                window = create_window("menu")   
+    
+    
     #zakladka, ktora pojawia sie, gdy klikniemy "dodaj post" (po lewej)
     elif zakladka == "post_add":
         sg.theme('DarkAmber')

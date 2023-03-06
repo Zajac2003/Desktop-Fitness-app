@@ -10,5 +10,5 @@ window = create_window("menu", activityid=0)
 
 while True:
     event, values = window.read()
-
+ 
 window.close()
