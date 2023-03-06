@@ -5,6 +5,7 @@ import datetime
 
 def create_window(zakladka, searched_id=1, activityid=0):
     # Definiujemy układ graficzny okna, zależne od 'zakladka'
+    # zakladka menu
     if zakladka == 'menu':
         sg.theme('DarkAmber')
         layout = [
@@ -31,8 +32,7 @@ def create_window(zakladka, searched_id=1, activityid=0):
                 window = create_window("search")
         window.close()
 
-
-    #zakladka, ktora pojawia sie, gdy klikniemy "dodaj post"
+    #zakladka, ktora pojawia sie, gdy klikniemy "dodaj post" (po lewej)
     elif zakladka == "post_add":
         sg.theme('DarkAmber')
         layout = [
@@ -74,27 +74,7 @@ def create_window(zakladka, searched_id=1, activityid=0):
                 window.close()
                 window = create_window("menu")
 
-
-    # zakladka, ktora pojawia sie, gdy klikniemy "przegladaj"
-    elif zakladka == "post_lookup":
-        sg.theme('DarkAmber')
-        layout = [ 
-                    [sg.Text("Tu bedzie zdjecie"), sg.MenuBar([["=",["Opcja1", "Opcja2"]]])],
-                    [sg.Button("Next"), sg.Push(), sg.Button("Cancel", key='-cancel-')]
-                ]
-
-        window = sg.Window("LIFTMATE/POST_LOOKUP", layout)
-        window.set_icon("icon.ico")
-        while True:
-            event, values = window.read()
-
-            if event == sg.WIN_CLOSED or event == 'OK':
-                break
-            elif event == "-cancel-":
-                window.close()
-                window = create_window("menu")
-
-    # zakladka, ktora pojawia sie, gdy klikniemy "search"
+    # zakladka, ktora pojawia sie, gdy klikniemy "search" (po prawej)
     elif zakladka == "search":
         sg.theme('DarkAmber')
         layout = [
@@ -132,8 +112,6 @@ def create_window(zakladka, searched_id=1, activityid=0):
                 id= result[0][0]
                 window.close()
                 window = create_window("profile", searched_id=id)
-
-
 
     # zakladka, ktora pojawia sie, gdy klikniemy "wyszukaj ziomali"
     elif zakladka == "account_settings":
@@ -182,15 +160,17 @@ def create_window(zakladka, searched_id=1, activityid=0):
                 window.close()
                 window = create_window("menu")
 
-    # generuje okno z aktywnością z bazy danych
-    elif zakladka == "activity":
+        # generuje okno z aktywnością z bazy danych
+
+    # zakladka, ktora pojawia sie gdy ogladasz aktywnosci innych (lub klikasz przycisk na srodku)
+    elif zakladka == "activity" or zakladka == "post_lookup":
         sg.theme('DarkAmber')
 
         db = sqlite3.connect("LIFTMATE_DATABASE.db")
         cursor = db.cursor()
         cursor.execute("SELECT * FROM activity where activity_id = ?", (activityid,))
         result = cursor.fetchall()
-        searched_id=result[0][1]
+        searched_id = result[0][1]
         if result[0][3] == "Run" or result[0][3] == "Swimming":
             wartosc = result[0][4]
             tekst = "Dystans: " + str(wartosc)
@@ -198,16 +178,16 @@ def create_window(zakladka, searched_id=1, activityid=0):
             wartosc = result[0][5]
             tekst = "Czas: " + str(wartosc)
         aktywnosc = result[0][3]
-        cursor.execute('SELECT nick from accounts WHERE account_id=?',(searched_id,))
+        cursor.execute('SELECT nick from accounts WHERE account_id=?', (searched_id,))
         result = cursor.fetchall()
         nick = result[0][0]
         layout = [
-                    [sg.Text(nick, font=('Arial',16))],
-                    [sg.MenuBar([["=", ["Opcja1", "Opcja2"]]])],
-                    [sg.Text("Activity: " + aktywnosc)],
-                    [sg.Text(tekst)],
-                    [sg.Push(),sg.Button("Back", key='-back-')]
-                ]
+            [sg.Text(nick, font=('Arial', 16))],
+            [sg.MenuBar([["=", ["Opcja1", "Opcja2"]]])],
+            [sg.Text("Activity: " + aktywnosc)],
+            [sg.Text(tekst)],
+            [sg.Button("Back", key='-back-'), sg.Push(), sg.Button("Next", key="-nextButton-")]
+        ]
 
         window = sg.Window("LIFTMATE/Profile", layout, size=(400, 445))
         window.set_icon("icon.ico")
@@ -221,6 +201,6 @@ def create_window(zakladka, searched_id=1, activityid=0):
             elif event == "-back-":
                 window.close()
                 window = create_window("menu")
-
-
-
+            elif event == "-nextButton-":
+                window.close()
+                window = create_window("activity", activityid = activityid+1)
