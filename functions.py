@@ -10,21 +10,44 @@ def create_window(zakladka, searched_id=1, activityid=0):
     # Definiujemy układ graficzny okna, zależne od 'zakladka'
     # zakladka menu
     if zakladka == 'menu':
+        ####################
+        db = sqlite3.connect("LIFTMATE_DATABASE.db")
+        cursor = db.cursor()
+
+        cursor.execute('SELECT * from activity')
+        result = cursor.fetchall()
+
+        total_distance = 0
+        total_burnt_calorie = 0
+        counter = 0
+
+        for wiersz in result:
+            total_distance += wiersz[4]
+            counter += 1
+
+        total_distance = round(total_distance)
+        total_burnt_calorie = round(total_distance * 60)
+        ############
+        db.commit()
+        db.close()
         y = np.array([35, 25, 25, 15])
         mylabels = ["Strength", "Endurance", "Speed", "Agility"]
 
         plt.pie(y,labels=mylabels, textprops={'color':"#FFFF00", 'size' : 'xx-large'}, autopct="%i")
         plt.savefig("Stat_Chart", dpi=40, format=None, transparent=True)
-        
+
         sg.theme('DarkAmber')
         layout = [
-                    [sg.Image(filename="profile_picture.png"), sg.MenuBar([["=",["Opcja1", "Opcja2"]]])],
-                    [sg.Image(filename="Stat_Chart.png")],
-                    [sg.Text("MENU")],
-                    [sg.Image(filename="add_icon.png", enable_events=True, key="-post_add-"), sg.Image(filename="post_lookup_icon.png", enable_events=True, key="-post_lookup-"), sg.Image(filename="search_icon.png", enable_events=True, key="-search-"), sg.Image(filename="fight_icon.png", enable_events=True, key="-fight_window-")]
-                  ]
+            [sg.MenuBar([["=", ["Opcja1", "Opcja2"]]])],
+            [sg.Image(filename="Stat_Chart.png")],
+            [sg.Text("Total burnt calories today " + str(total_burnt_calorie))],
+            [sg.Text("Total km travelled " + str(total_distance) + "km")],
+            [sg.Text("Trainings today " + str(counter))],
+            [sg.Text()],
+            [sg.Image(filename="add_icon.png", enable_events=True, key="-post_add-"), sg.Push(), sg.Image(filename="fight_icon.png", enable_events=True, key="-fightButton-"), sg.Push(), sg.Image(filename="post_lookup_icon.png", enable_events=True, key="-post_lookup-"), sg.Push(),sg.Image(filename="search_icon.png", enable_events=True, key="-search-")],
+        ]
 
-        window = sg.Window("LIFTMATE", layout)
+        window = sg.Window("LIFTMATE", layout, size=(300, 420))
         window.set_icon("icon.ico")
         while True:
             event, values = window.read()
@@ -43,14 +66,38 @@ def create_window(zakladka, searched_id=1, activityid=0):
             elif event == "-search-":
                 window.close()
                 window = create_window("search")
+            elif event == '-fightButton-':
+                window.close()
+                window = create_window("fight_window")
         window.close()
 
     #zakładka walki
     elif zakladka == "fight_window":
         sg.theme('DarkAmber')
+####################
+        db = sqlite3.connect("LIFTMATE_DATABASE.db")
+        cursor = db.cursor()
+
+        cursor.execute('SELECT stat_strength, stat_endurance, stat_speed, stat_agility from accounts')
+        result = cursor.fetchall()
+
+        my_moc = 0
+        enemy_moc = 0
+        i=0
+        for moc in result:
+            if i==0:
+                my_moc = int(moc[0]) + int(moc[1])+ int(moc[2])+ int(moc[3])
+            if i==1:
+                enemy_moc = int(moc[0]) + int(moc[1]) + int(moc[2]) + int(moc[3])
+            i+=1
+
+        db.commit()
+        db.close()
+
         layout = [
-            [sg.Text("WALKA"), sg.MenuBar([["=", ["Opcja1", "Opcja2"]]])],
-            [ sg.Button("Back", key='-cancel-')]
+            [sg.Text("Twoja moc: " + str(my_moc)), sg.MenuBar([["=", ["Opcja1", "Opcja2"]]])],
+            [sg.Text("Moc przeciwnika: " + str(enemy_moc))],
+            [sg.Button("Fight!", key='-FIGHT-'), sg.Button("Back", key='-cancel-')],
         ]
 
         window = sg.Window("FITMATE/SEARCH", layout)
@@ -62,8 +109,13 @@ def create_window(zakladka, searched_id=1, activityid=0):
                 break
             elif event == "-cancel-":
                 window.close()
-                window = create_window("menu")   
-    
+                window = create_window("menu")
+            if event == '-FIGHT-':
+                window.close()
+                if( my_moc > enemy_moc):
+                    window = create_window("lost")
+                elif (my_moc <= enemy_moc):
+                    window = create_window("won")
     
     #zakladka, ktora pojawia sie, gdy klikniemy "dodaj post" (po lewej)
     elif zakladka == "post_add":
@@ -285,7 +337,28 @@ def create_window(zakladka, searched_id=1, activityid=0):
             elif event == '-Draw-':
                 draw_plot()
 
-    window.close()
+    elif zakladka == "won":
+        sg.theme('DarkAmber')
+        layout = [
+            [sg.Text("You Won")],
+            [sg.Button("Back", key='-back-')],
+        ]
+
+        window = sg.Window("LIFTMATE", layout)
+        window.set_icon("icon.ico")
+        while True:
+            event, values = window.read()
+
+            if event == sg.WIN_CLOSED or event == 'OK':
+                break
+            elif event == '-back-':
+                window.close()
+                window = create_window("menu")
+
+
+    #window.close()
+
+
 
 def draw_plot():
     x = np.arange(0, 10, 0.1)
