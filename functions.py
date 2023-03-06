@@ -15,16 +15,40 @@ def create_window(zakladka, searched_id=1, activityid=0):
 
         plt.pie(y, labels = mylabels, textprops={'color':"y", 'size' : 'xx-large'})
         plt.savefig("Stat_Chart", dpi=40, format=None, transparent=True)
-        
+
+        #########################
+        db = sqlite3.connect("LIFTMATE_DATABASE.db")
+        cursor = db.cursor()
+
+        cursor.execute('SELECT * from activity')
+        result = cursor.fetchall()
+
+        total_distance = 0
+        licznik = 0
+        total_calories_burnt = 0
+        for wiersz in result:
+            total_distance += wiersz[4]
+            licznik += 1
+
+        total_calories_burnt = round(total_distance * 60)
+        total_distance = round(total_distance)
+
+        db.commit()
+        db.close()
+        #########################
+
         sg.theme('DarkAmber')
         layout = [
-                    [sg.Image(filename="profile_picture.png"), sg.MenuBar([["=",["Opcja1", "Opcja2"]]])],
+                    [sg.MenuBar([["=",["Opcja1", "Opcja2"]]])],
                     [sg.Image(filename="Stat_Chart.png")],
-                    [sg.Text("MENU")],
-                    [sg.Image(filename="add_icon.png", enable_events=True, key="-post_add-"), sg.Image(filename="post_lookup_icon.png", enable_events=True, key="-post_lookup-"), sg.Image(filename="search_icon.png", enable_events=True, key="-search-")]
+                    [sg.Text("Calories burnt today " + str(total_calories_burnt))],
+                    [sg.Text("Total distance travelled " + str(total_distance) + "km")],
+                    [sg.Text("Trainings today " + str(licznik))],
+                    [sg.Text("",expand_y=True)],
+                    [sg.Image(filename="add_icon.png", enable_events=True, key="-post_add-"), sg.Push(), sg.Image(filename="post_lookup_icon.png", enable_events=True, key="-post_lookup-"), sg.Push(), sg.Image(filename="search_icon.png", enable_events=True, key="-search-")]
                   ]
 
-        window = sg.Window("LIFTMATE", layout)
+        window = sg.Window("LIFTMATE", layout, size=(300,380))
         window.set_icon("icon.ico")
         while True:
             event, values = window.read()
