@@ -10,9 +10,16 @@ def create_window(zakladka, searched_id=1, activityid=0):
     # Definiujemy układ graficzny okna, zależne od 'zakladka'
     # zakladka menu
     if zakladka == 'menu':
+        y = np.array([35, 25, 25, 15])
+        mylabels = ["Strength", "Endurance", "Speed", "Agility"]
+
+        plt.pie(y, labels = mylabels)
+        plt.savefig("Stat_Chart", dpi='figure', format=None, transparent=True)
+        
         sg.theme('DarkAmber')
         layout = [
                     [sg.Image(filename="profile_picture.png"), sg.MenuBar([["=",["Opcja1", "Opcja2"]]])],
+                    [sg.Image(filename="Stat_Chart")],
                     [sg.Text("MENU")],
                     [sg.Image(filename="add_icon.png", enable_events=True, key="-post_add-"), sg.Image(filename="post_lookup_icon.png", enable_events=True, key="-post_lookup-"), sg.Image(filename="search_icon.png", enable_events=True, key="-search-")]
                   ]
