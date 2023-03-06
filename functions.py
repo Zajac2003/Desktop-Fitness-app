@@ -11,7 +11,7 @@ def create_window(zakladka, searched_id=1, activityid=0):
         layout = [
                     [sg.Image(filename="profile_picture.png"), sg.MenuBar([["=",["Opcja1", "Opcja2"]]])],
                     [sg.Text("MENU")],
-                    [sg.Image(filename="add_icon.png", enable_events=True, key="-post_add-"), sg.Image(filename="post_lookup_icon.png", enable_events=True, key="-post_lookup-"), sg.Image(filename="search_icon.png", enable_events=True, key="-search-")]
+                    [sg.Image(filename="add_icon.png", enable_events=True, key="-post_add-", tooltip="Create a post"), sg.Image(filename="post_lookup_icon.png", enable_events=True, key="-post_lookup-", tooltip="Browse posts"), sg.Image(filename="search_icon.png", enable_events=True, key="-search-", tooltip="Search for a user")]
                   ]
 
         window = sg.Window("LIFTMATE", layout)
