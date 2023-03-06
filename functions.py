@@ -10,7 +10,7 @@ def create_window(zakladka, searched_id=1):
         layout = [
                     [sg.Image(filename="profile_picture.png"), sg.MenuBar([["=",["Opcja1", "Opcja2"]]])],
                     [sg.Text("MENU")],
-                    [sg.Button("Post_add", key='-post_add-'), sg.Button("Post_lookup", key='-post_lookup-'), sg.Button("Search", key="-search-")]
+                    [sg.Image(filename="add_icon.png", enable_events=True, key="-post_add-"), sg.Image(filename="post_lookup_icon.png", enable_events=True, key="-post_lookup-"), sg.Image(filename="search_icon.png", enable_events=True, key="-search-")]
                   ]
 
         window = sg.Window("LIFTMATE", layout)
@@ -78,9 +78,9 @@ def create_window(zakladka, searched_id=1):
     # zakladka, ktora pojawia sie, gdy klikniemy "przegladaj"
     elif zakladka == "post_lookup":
         sg.theme('DarkAmber')
-        layout = [
+        layout = [ 
                     [sg.Text("Tu bedzie zdjecie"), sg.MenuBar([["=",["Opcja1", "Opcja2"]]])],
-                    [sg.Button("Next"), sg.Push(), sg.Button("Cancel", key='-cancel-')]
+                    [sg.Button("Share"), sg.Push(), sg.Button("Cancel", key='-cancel-')]
                 ]
 
         window = sg.Window("LIFTMATE/POST_LOOKUP", layout)
