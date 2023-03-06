@@ -1,6 +1,8 @@
 import sqlite3
 import PySimpleGUI as sg
 import datetime
+from plyer import notification
+
 
 
 def create_window(zakladka, searched_id=1, activityid=0):
@@ -71,6 +73,12 @@ def create_window(zakladka, searched_id=1, activityid=0):
                 cursor.execute("INSERT INTO activity (id, data, type_of_activity, distance, time) VALUES (0, ?, ?, ?, ?)",(czasdata, activity, dystans, czas))
                 db.commit()
                 db.close()
+                notification.notify(
+                    title = 'Post created',
+                    message = 'Post created successfully',
+                    app_icon = "icon.ico",
+                    timeout = 2,
+                )
                 window.close()
                 window = create_window("menu")
 
