@@ -34,6 +34,8 @@ def create_window(zakladka):
     elif zakladka == "account_info":
         sg.theme('Dark blue')
         layout = [
+                    [sg.Input(), sg.Text("Email")],
+                    [sg.Input(), sg.Text("Password")],
                     [sg.Input(), sg.Text("Nickname")],
                     [sg.Input(), sg.Text("Team ID")],
                     [sg.Input(), sg.Text("Weight")],
