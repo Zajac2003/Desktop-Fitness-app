@@ -13,8 +13,8 @@ def create_window(zakladka, searched_id=1, activityid=0):
         y = np.array([35, 25, 25, 15])
         mylabels = ["Strength", "Endurance", "Speed", "Agility"]
 
-        plt.pie(y, labels = mylabels, textprops={'color':"y"})
-        plt.savefig("Stat_Chart", dpi='figure', format=None, transparent=True)
+        plt.pie(y, labels = mylabels, textprops={'color':"y", 'size' : 'xx-large'})
+        plt.savefig("Stat_Chart", dpi=40, format=None, transparent=True)
         
         sg.theme('DarkAmber')
         layout = [
