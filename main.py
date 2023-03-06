@@ -6,7 +6,7 @@ from functions import *
 db = sqlite3.connect("LIFTMATE_DATABASE.db")
 cursor = db.cursor()
 
-window = create_window("menu")
+window = create_window("account_info")
 
 while True:
     event, values = window.read()
