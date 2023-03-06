@@ -1,7 +1,7 @@
 import PySimpleGUI as sg
 import sqlite3
 from functions import *
-
+#jebac
 # database
 db = sqlite3.connect("LIFTMATE_DATABASE.db")
 cursor = db.cursor()
