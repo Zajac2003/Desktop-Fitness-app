@@ -236,29 +236,5 @@ def create_window(zakladka, searched_id=1, activityid=0):
                 window.close()
                 window = create_window("activity", activityid = activityid+1)
 
-    # zakladka statystyk
-    elif zakladka == "statistics":
-        sg.theme('DarkAmber')
-        layout = [
-            [sg.Text("staty")],
-            [sg.Text("staty")],
-            [sg.Text("staty")]
-        ]
-
-        window = sg.Window("LIFTMATE", layout)
-        window.set_icon("icon.ico")
-        while True:
-            event, values = window.read()
-
-            if event == sg.WIN_CLOSED or event == 'OK':
-                break
-            elif event == '-Draw-':
-                draw_plot()
-
     window.close()
 
-def draw_plot():
-    x = np.arange(0, 10, 0.1)
-    y = np.sin(x)
-    plt.plot(x, y)
-    plt.show()
