@@ -10,21 +10,46 @@ def create_window(zakladka, searched_id=1, activityid=0):
     # Definiujemy układ graficzny okna, zależne od 'zakladka'
     # zakladka menu
     if zakladka == 'menu':
+        ####################
+        db = sqlite3.connect("LIFTMATE_DATABASE.db")
+        cursor = db.cursor()
+
+        cursor.execute('SELECT * from activity')
+        result = cursor.fetchall()
+
+        total_distance = 0
+        total_burnt_calorie = 0
+        counter= 0
+
+        for wiersz in result:
+            total_distance += wiersz[4]
+            counter += 1
+
+        total_distance = round(total_distance)
+        total_burnt_calorie = round(total_distance*60)
+
+        db.commit()
+        db.close()
+        ####################
+
         y = np.array([35, 25, 25, 15])
         mylabels = ["Strength", "Endurance", "Speed", "Agility"]
 
         plt.pie(y,labels=mylabels, textprops={'color':"#FFFF00", 'size' : 'xx-large'}, autopct="%i")
         plt.savefig("Stat_Chart", dpi=40, format=None, transparent=True)
-        
+
         sg.theme('DarkAmber')
         layout = [
-                    [sg.Image(filename="profile_picture.png"), sg.MenuBar([["=",["Opcja1", "Opcja2"]]])],
+                    [sg.MenuBar([["=",["Opcja1", "Opcja2"]]])],
                     [sg.Image(filename="Stat_Chart.png")],
-                    [sg.Text("MENU")],
-                    [sg.Image(filename="add_icon.png", enable_events=True, key="-post_add-"), sg.Image(filename="post_lookup_icon.png", enable_events=True, key="-post_lookup-"), sg.Image(filename="search_icon.png", enable_events=True, key="-search-")]
+                    [sg.Text("Total burnt calories today " + str(total_burnt_calorie))],
+                    [sg.Text("Total km travelled " + str(total_distance) + "km")],
+                    [sg.Text("Trainings today " + str(counter))],
+                    [sg.Text()],
+                    [sg.Image(filename="add_icon.png", enable_events=True, key="-post_add-"), sg.Push(), sg.Image(filename="post_lookup_icon.png", enable_events=True, key="-post_lookup-"), sg.Push(), sg.Image(filename="search_icon.png", enable_events=True, key="-search-")]
                   ]
 
-        window = sg.Window("LIFTMATE", layout)
+        window = sg.Window("LIFTMATE", layout, size=(300,370))
         window.set_icon("icon.ico")
         while True:
             event, values = window.read()
@@ -243,29 +268,3 @@ def create_window(zakladka, searched_id=1, activityid=0):
                 window.close()
                 window = create_window("activity", activityid = activityid+1)
 
-    # zakladka statystyk
-    elif zakladka == "statistics":
-        sg.theme('DarkAmber')
-        layout = [
-            [sg.Text("staty")],
-            [sg.Text("staty")],
-            [sg.Text("staty")]
-        ]
-
-        window = sg.Window("LIFTMATE", layout)
-        window.set_icon("icon.ico")
-        while True:
-            event, values = window.read()
-
-            if event == sg.WIN_CLOSED or event == 'OK':
-                break
-            elif event == '-Draw-':
-                draw_plot()
-
-    window.close()
-
-def draw_plot():
-    x = np.arange(0, 10, 0.1)
-    y = np.sin(x)
-    plt.plot(x, y)
-    plt.show()
