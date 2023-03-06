@@ -1,8 +1,8 @@
 import sqlite3
 import PySimpleGUI as sg
 import datetime
-from plyer import notification
-
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 def create_window(zakladka, searched_id=1, activityid=0):
@@ -13,7 +13,7 @@ def create_window(zakladka, searched_id=1, activityid=0):
         layout = [
                     [sg.Image(filename="profile_picture.png"), sg.MenuBar([["=",["Opcja1", "Opcja2"]]])],
                     [sg.Text("MENU")],
-                    [sg.Image(filename="add_icon.png", enable_events=True, key="-post_add-", tooltip="Create a post"), sg.Image(filename="post_lookup_icon.png", enable_events=True, key="-post_lookup-", tooltip="Browse posts"), sg.Image(filename="search_icon.png", enable_events=True, key="-search-", tooltip="Search for a user")]
+                    [sg.Image(filename="add_icon.png", enable_events=True, key="-post_add-"), sg.Image(filename="post_lookup_icon.png", enable_events=True, key="-post_lookup-"), sg.Image(filename="search_icon.png", enable_events=True, key="-search-")]
                   ]
 
         window = sg.Window("LIFTMATE", layout)
@@ -63,22 +63,38 @@ def create_window(zakladka, searched_id=1, activityid=0):
                 czasdata = czasdata[0:10]
 
                 print(values['distanceortime'])
-                if activity == "Run" or activity == "Swimming":
+                if activity == "Run" or activity == "Swimming" or activity == "Dancing":
                     dystans = values['distanceortime']
                     czas = 0
+                    punkty = int(dystans) / 2
+
                 else:
                     dystans = 0
                     czas = values['distanceortime']
+                    print("EEOEO")
+                    print(int(czas))
+                    punkty = int(czas)/20
 
-                cursor.execute("INSERT INTO activity (id, data, type_of_activity, distance, time) VALUES (0, ?, ?, ?, ?)",(czasdata, activity, dystans, czas))
+                cursor.execute(
+                    "INSERT INTO activity (id, data, type_of_activity, distance, time) VALUES (0, ?, ?, ?, ?)",
+                    (czasdata, activity, dystans, czas))
                 db.commit()
                 db.close()
-                notification.notify(
-                    title = 'Post created',
-                    message = 'Post created successfully',
-                    app_icon = "icon.ico",
-                    timeout = 2,
-                )
+
+                db = sqlite3.connect("LIFTMATE_DATABASE.db")
+                cursor = db.cursor()
+                ########DODAWANIE PUNKTÓW
+                if activity == "Run" or activity == "Swimming" or activity == "Dancing":
+                    cursor.execute('UPDATE accounts SET stat_endurance = stat_endurance + ? WHERE account_id = ?',(punkty, 0))
+                    cursor.execute('UPDATE accounts SET stat_speed = stat_speed + ? WHERE account_id = ?',(punkty, 0))
+                    cursor.execute('UPDATE accounts SET stat_agility = stat_agility + ? WHERE account_id = ?',(punkty, 0))
+                else:
+                    cursor.execute('UPDATE accounts SET stat_strength = stat_strength + ? WHERE account_id = ?', (punkty, 0))
+                    cursor.execute('UPDATE accounts SET stat_endurance = stat_endurance + ? WHERE account_id = ?', (punkty, 0))
+
+                db.commit()
+                db.close()
+
                 window.close()
                 window = create_window("menu")
 
@@ -212,3 +228,30 @@ def create_window(zakladka, searched_id=1, activityid=0):
             elif event == "-nextButton-":
                 window.close()
                 window = create_window("activity", activityid = activityid+1)
+
+    # zakladka statystyk
+    elif zakladka == "statistics":
+        sg.theme('DarkAmber')
+        layout = [
+            [sg.Text("staty")],
+            [sg.Text("staty")],
+            [sg.Text("staty")]
+        ]
+
+        window = sg.Window("LIFTMATE", layout)
+        window.set_icon("icon.ico")
+        while True:
+            event, values = window.read()
+
+            if event == sg.WIN_CLOSED or event == 'OK':
+                break
+            elif event == '-Draw-':
+                draw_plot()
+
+    window.close()
+
+def draw_plot():
+    x = np.arange(0, 10, 0.1)
+    y = np.sin(x)
+    plt.plot(x, y)
+    plt.show()
