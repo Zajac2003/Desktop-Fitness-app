@@ -1,6 +1,8 @@
 import sqlite3
 import PySimpleGUI as sg
 import datetime
+from plyer import notification
+
 
 
 def create_window(zakladka, searched_id=1, activityid=0):
@@ -11,7 +13,7 @@ def create_window(zakladka, searched_id=1, activityid=0):
         layout = [
                     [sg.Image(filename="profile_picture.png"), sg.MenuBar([["=",["Opcja1", "Opcja2"]]])],
                     [sg.Text("MENU")],
-                    [sg.Image(filename="add_icon.png", enable_events=True, key="-post_add-"), sg.Image(filename="post_lookup_icon.png", enable_events=True, key="-post_lookup-"), sg.Image(filename="search_icon.png", enable_events=True, key="-search-")]
+                    [sg.Image(filename="add_icon.png", enable_events=True, key="-post_add-", tooltip="Create a post"), sg.Image(filename="post_lookup_icon.png", enable_events=True, key="-post_lookup-", tooltip="Browse posts"), sg.Image(filename="search_icon.png", enable_events=True, key="-search-", tooltip="Search for a user")]
                   ]
 
         window = sg.Window("LIFTMATE", layout)
@@ -71,6 +73,12 @@ def create_window(zakladka, searched_id=1, activityid=0):
                 cursor.execute("INSERT INTO activity (id, data, type_of_activity, distance, time) VALUES (0, ?, ?, ?, ?)",(czasdata, activity, dystans, czas))
                 db.commit()
                 db.close()
+                notification.notify(
+                    title = 'Post created',
+                    message = 'Post created successfully',
+                    app_icon = "icon.ico",
+                    timeout = 2,
+                )
                 window.close()
                 window = create_window("menu")
 
