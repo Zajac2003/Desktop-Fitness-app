@@ -3,6 +3,7 @@ import PySimpleGUI as sg
 import datetime
 import matplotlib.pyplot as plt
 import numpy as np
+from plyer import notification
 
 
 def create_window(zakladka, searched_id=1, activityid=0):
@@ -62,6 +63,12 @@ def create_window(zakladka, searched_id=1, activityid=0):
                 czasdata = str(czasdata)
                 czasdata = czasdata[0:10]
 
+                notification.notify(
+                    title = 'Post created',
+                    message = 'Post created successfully',
+                    app_icon = "icon.ico",
+                    timeout = 2,
+                )
                 print(values['distanceortime'])
                 if activity == "Run" or activity == "Swimming" or activity == "Dancing":
                     dystans = values['distanceortime']
