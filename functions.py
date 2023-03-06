@@ -37,7 +37,7 @@ def create_window(zakladka, searched_id=1, activityid=0):
         sg.theme('DarkAmber')
         layout = [
             [sg.Spin(["Run", "Gym", "Dancing", "Swimming"]), sg.MenuBar([["=", ["Opcja1", "Opcja2"]]])],
-            [sg.Input("km/h", key='distanceortime')],
+            [sg.Input("distance or time ", key='distanceortime')],
             [sg.Button("Share", key='-Share-'), sg.Push(), sg.Button("Cancel", key='-cancel-')]
         ]
 
@@ -80,7 +80,7 @@ def create_window(zakladka, searched_id=1, activityid=0):
         sg.theme('DarkAmber')
         layout = [ 
                     [sg.Text("Tu bedzie zdjecie"), sg.MenuBar([["=",["Opcja1", "Opcja2"]]])],
-                    [sg.Button("Share"), sg.Push(), sg.Button("Cancel", key='-cancel-')]
+                    [sg.Button("Next"), sg.Push(), sg.Button("Cancel", key='-cancel-')]
                 ]
 
         window = sg.Window("LIFTMATE/POST_LOOKUP", layout)
